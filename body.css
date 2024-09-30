@@ -1,0 +1,70 @@
+       /* 全体を中央に配置するためのスタイル */
+       body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* ビューポートの高さに合わせる */
+        margin: 0;
+        background-size: cover; /* 背景をカバー */
+        position: relative; /* ボタンが重なるように */
+    }
+
+    /* CSS */
+    .button-32 {
+        background-color: #fff000;
+        border-radius: 8px; /* ボタンの角を少し丸く */
+        color: #000;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 30px 50px; /* ボタンのサイズを小さく */
+        text-align: center;
+        transition: 200ms;
+        width: auto; /* 幅を自動に設定 */
+        box-sizing: border-box;
+        border: 0;
+        font-size: 20px; /* フォントサイズを小さく */
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        position: absolute; /* ボタンを絶対位置にする */
+        left: 50%; /* 左端から50% */
+        top: 50%; /* 上端から50% */
+        transform: translate(-50%, -50%); /* ボタンを中央にシフト */
+        z-index: 1; /* 重なり順序を指定 */
+    }
+
+    .button-32:not(:disabled):hover {
+        background: #aea602;
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, .2), 0 3px 8px 0 rgba(0, 0, 0, .15);
+    }
+
+    .button-32:disabled {
+        filter: saturate(0.2) opacity(0.5);
+        -webkit-filter: saturate(0.2) opacity(0.5);
+        cursor: not-allowed;
+    }
+
+
+    .text {
+        font-size: 24px; /* テキストのサイズ */
+        white-space: nowrap; /* テキストの折り返しを防ぐ */
+        overflow: hidden; /* はみ出したテキストを隠す */
+        border-right: 3px solid #000; /* タイプライター効果のカーソル */
+        animation: blink 0.7s step-end infinite; /* カーソルの点滅アニメーション */
+    }
+    
+/*type*/
+.text-container {
+    position: relative; /* 相対位置を設定 */
+    margin-bottom: 20px; /* ボタンとの間隔を確保 */
+}
+
+.text {
+    font-size: 24px; /* テキストのサイズ */
+    white-space: nowrap; /* テキストの折り返しを防ぐ */
+    overflow: hidden; /* はみ出したテキストを隠す */
+    border-right: 3px solid #ffffff; /* タイプライター効果のカーソル */
+    animation: blink 0.7s step-end infinite; /* カーソルの点滅アニメーション */
+}
+
+

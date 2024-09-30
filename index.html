@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Argos.online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Argos.online">
+
+    <link rel="stylesheet" href="loading.css">
+    <link rel="stylesheet" href="body.css">
+    <link rel="script" href="type.js">
+    <link rel="script" href="gallarey.js">
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <!-- ScrollTrigger Plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+   
+</head>
+
+<body>
+    <!-- メイン -->  
+
+   <div class="maincontents">
+         <button class="button-32" role="button" src="join.html">Start Argos</button>
+
+       <div class="text-container">
+        <p class="text" id="text"></p> <!-- ここにテキストが表示される -->
+    </div>
+
+   </div>
+
+
+
+
+
+       <!-- ローディング -->  
+<div class="loading">
+
+        <div class="loader">
+            <span class="loader__text">0%</span>
+        </div>
+        
+        
+
+    <script src="gallarey.js"></script>
+      
+    <div style="position: relative; z-index: -1;" class="gradient-bg">
+
+    <div class="gradients-container">
+        <div class="g1"></div>
+        <div class="g2"></div>
+        <div class="g3"></div>
+        <div class="g4"></div>
+        <div class="g5"></div>
+        <div class="interactive"></div>
+      </div>
+    </div>
+</div>
+    <!-- ハンバーガーメニュー -->
+  
+    <!-- サイドバー -->
+ 
+    <!-- JavaScript -->
+    <script>
+        const menuToggle = document.getElementById('menu-toggle');
+        const navBar = document.getElementById('nav-bar');
+
+        menuToggle.addEventListener('click', () => {
+            navBar.classList.toggle('active');
+            menuToggle.classList.toggle('open');
+        });
+        
+        document.querySelectorAll('.nav-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const target = button.id;
+                if (target) {
+                    window.location.href = target + '.html';
+                }
+            });
+        });
+    </script>
+
+    <footer>
+        <!--ここに入れろ-->
+    </footer>
+</body>
+
+</html>
+
