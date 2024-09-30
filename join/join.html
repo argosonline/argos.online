@@ -21,22 +21,27 @@
 <body>
     <!-- メイン -->  
 
-   <div class="maincontents">
-         <button class="button-32" role="button" href="join.html">Start Argos</button>
-
-       <div class="text-container">
-        <p class="text" id="text"></p> <!-- ここにテキストが表示される -->
-    </div>
-
-   </div>
-
-
-
-
+            <div class="maincontents">
+                <h1>Enter Meeting Password</h1>
+                <form id="passwordForm">
+                  <input type="password" id="meetingPassword" placeholder="Enter password" required />
+                  <button type="submit">Join/Create Meeting</button>
+                </form>
+              
+                <script>
+                  document.getElementById('passwordForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const password = document.getElementById('meetingPassword').value;
+                    if (password) {
+                      window.location.href = `/meeting.html?password=${encodeURIComponent(password)}`;
+                    }
+                  });
+                </script>
+                </div>
 
        <!-- 背景 -->  
 <div class="loading">
-   
+    
 
     <script src="gallarey.js"></script>
       

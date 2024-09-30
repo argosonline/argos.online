@@ -1,0 +1,151 @@
+       /* 全体を中央に配置するためのスタイル */
+       body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh; /* ビューポートの高さに合わせる */
+        margin: 0;
+        background-size: cover; /* 背景をカバー */
+        position: relative; /* ボタンが重なるように */
+    }
+
+    /* CSS */
+    .button-32 {
+        background-color: #fff000;
+        border-radius: 8px; /* ボタンの角を少し丸く */
+        color: #ffffff;
+        cursor: pointer;
+        font-weight: bold;
+        padding: 30px 50px; /* ボタンのサイズを小さく */
+        text-align: center;
+        transition: 200ms;
+        width: auto; /* 幅を自動に設定 */
+        box-sizing: border-box;
+        border: 0;
+        font-size: 20px; /* フォントサイズを小さく */
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+        position: absolute; /* ボタンを絶対位置にする */
+        left: 50%; /* 左端から50% */
+        top: 50%; /* 上端から50% */
+        transform: translate(-50%, -50%); /* ボタンを中央にシフト */
+        z-index: 1; /* 重なり順序を指定 */
+    }
+
+    .button-32:not(:disabled):hover {
+        background: #aea602;
+        box-shadow: 0 0 0 2px rgb(253, 248, 248), 0 3px 8px 0 rgba(0, 0, 0, .15);
+    }
+
+    .button-32:disabled {
+        filter: saturate(0.2) opacity(0.5);
+        -webkit-filter: saturate(0.2) opacity(0.5);
+        cursor: not-allowed;
+    }
+
+
+    
+/*type*/
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
+
+html,
+body {
+  font-family: 'Roboto Mono', monospace;
+  background: transparent; /* 背景を透明に設定 */
+  height: 100%;
+  margin: 0; /* 不要なマージンを削除 */
+}
+
+.container {
+    position: absolute;
+    top: 60%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    z-index: 2; /* テキストをボタンより前面に表示 */
+    transform: translateY(400%); /* 100%下に移動 */
+  }
+  
+
+.text {
+  font-weight: 100;
+  font-size: 40px;
+  color: #fafafa; /* テキストの色を白に設定 */
+  transform: translateY(400%); /* 100%下に移動 */
+}
+
+.dud {
+  color: #757575; /* ダミー文字の色をグレーに設定 */
+}
+
+
+
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
+
+html,
+body {
+    font-family: 'Roboto Mono', monospace;
+    background: transparent; /* 背景を透明に設定 */
+    height: 100%;
+    margin: 0; /* 不要なマージンを削除 */
+}
+
+.text-scramble-container {
+    position: absolute;
+    top: 70%; /* 調整した位置 */
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    z-index: 2; /* テキストをボタンより前面に表示 */
+    transform: translateY(-800%); /* 追加で下に移動 */
+}
+
+.scrambled-text {
+    font-weight: 100;
+    font-size: 40px;
+    color: #fafafa; /* テキストの色を白に設定 */
+}
+
+.scrambled-dud {
+    color: #757575; /* ダミー文字の色をグレーに設定 */
+}
+
+.maincontents {
+    position: absolute;
+    top: 50%;  /* 上端から50%の位置 */
+    left: 50%; /* 左端から50%の位置 */
+    transform: translate(-50%, -50%); /* 要素の幅と高さの半分を引いて中央に */
+    z-index: 2; /* 背景より前に表示 */
+    text-align: center; /* テキストを中央揃えに */
+    background: rgba(255, 255, 255, 0.2); /* 背景を半透明に設定 */
+    padding: 20px;
+    border-radius: 10px;
+    backdrop-filter: blur(10px); /* 背景をぼかす効果を追加 */
+}
+
+input[type="password"], button {
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 80%; /* 幅を調整 */
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.h1{
+    color: #fafafa;
+}

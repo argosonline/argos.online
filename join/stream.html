@@ -1,0 +1,52 @@
+<!-- meeting.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meeting Room</title>
+</head>
+<body>
+  <h1>Meeting Room</h1>
+  <video id="localVideo" autoplay playsinline muted></video>
+  <video id="remoteVideo" autoplay playsinline></video>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const password = urlParams.get('password');
+    const localVideo = document.getElementById('localVideo');
+    const remoteVideo = document.getElementById('remoteVideo');
+    const peerConnection = new RTCPeerConnection();
+
+    // カメラ・マイクの取得
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        localVideo.srcObject = stream;
+        stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+      });
+
+    // シグナリングサーバーとの通信（AWS上のSocket.IOサーバー）
+    const socket = io.connect('https://your-aws-server-url');
+    socket.emit('join', password); // パスワードを使って特定の会議に参加
+
+    socket.on('offer', (offer) => {
+      peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+      peerConnection.createAnswer()
+        .then(answer => {
+          peerConnection.setLocalDescription(answer);
+          socket.emit('answer', answer);
+        });
+    });
+
+    peerConnection.ontrack = (event) => {
+      remoteVideo.srcObject = event.streams[0];
+    };
+
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        socket.emit('ice-candidate', event.candidate);
+      }
+    };
+  </script>
+</body>
+</html>
