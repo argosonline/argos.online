@@ -13,7 +13,7 @@
     .button-32 {
         background-color: #fff000;
         border-radius: 8px; /* ボタンの角を少し丸く */
-        color: #000;
+        color: #000000;
         cursor: pointer;
         font-weight: bold;
         padding: 30px 50px; /* ボタンのサイズを小さく */
@@ -45,26 +45,71 @@
     }
 
 
-    .text {
-        font-size: 24px; /* テキストのサイズ */
-        white-space: nowrap; /* テキストの折り返しを防ぐ */
-        overflow: hidden; /* はみ出したテキストを隠す */
-        border-right: 3px solid #000; /* タイプライター効果のカーソル */
-        animation: blink 0.7s step-end infinite; /* カーソルの点滅アニメーション */
-    }
     
 /*type*/
-.text-container {
-    position: relative; /* 相対位置を設定 */
-    margin-bottom: 20px; /* ボタンとの間隔を確保 */
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
+
+html,
+body {
+  font-family: 'Roboto Mono', monospace;
+  background: transparent; /* 背景を透明に設定 */
+  height: 100%;
+  margin: 0; /* 不要なマージンを削除 */
 }
+
+.container {
+    position: absolute;
+    top: 60%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    z-index: 2; /* テキストをボタンより前面に表示 */
+    transform: translateY(400%); /* 100%下に移動 */
+  }
+  
 
 .text {
-    font-size: 24px; /* テキストのサイズ */
-    white-space: nowrap; /* テキストの折り返しを防ぐ */
-    overflow: hidden; /* はみ出したテキストを隠す */
-    border-right: 3px solid #ffffff; /* タイプライター効果のカーソル */
-    animation: blink 0.7s step-end infinite; /* カーソルの点滅アニメーション */
+  font-weight: 100;
+  font-size: 40px;
+  color: #fafafa; /* テキストの色を白に設定 */
+  transform: translateY(400%); /* 100%下に移動 */
 }
 
+.dud {
+  color: #757575; /* ダミー文字の色をグレーに設定 */
+}
+
+
+
+@import 'https://fonts.googleapis.com/css?family=Roboto+Mono:100';
+
+html,
+body {
+    font-family: 'Roboto Mono', monospace;
+    background: transparent; /* 背景を透明に設定 */
+    height: 100%;
+    margin: 0; /* 不要なマージンを削除 */
+}
+
+.text-scramble-container {
+    position: absolute;
+    top: 70%; /* 調整した位置 */
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    z-index: 2; /* テキストをボタンより前面に表示 */
+    transform: translateY(-800%); /* 追加で下に移動 */
+}
+
+.scrambled-text {
+    font-weight: 100;
+    font-size: 40px;
+    color: #fafafa; /* テキストの色を白に設定 */
+}
+
+.scrambled-dud {
+    color: #757575; /* ダミー文字の色をグレーに設定 */
+}
 
