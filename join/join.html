@@ -29,23 +29,22 @@
                 </form>
               
                 <script>
-                 document.getElementById('passwordForm').addEventListener('submit', async (e) => {
-                      e.preventDefault();
-                      const password = document.getElementById('meetingPassword').value;
-                    
-                      if (password) {
-                        // サーバーにルームの存在を確認
-                        const response = await fetch(`/check-room?password=${encodeURIComponent(password)}`);
-                        const data = await response.json();
-                    
-                        if (data.exists) {
-                          // ルームが存在する場合は視聴者として参加
-                          window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}&role=viewer`;
-                        } else {
-                          // ルームが存在しない場合は配信者として参加
-                          window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}&role=broadcaster`;
+                    document.getElementById('passwordForm').addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const password = document.getElementById('meetingPassword').value;
+                        if (password) {
+                            socket.emit('check-room', password); // ルームの存在確認を要求
                         }
-                      }
+                    });
+
+                    socket.on('room-check', ({ exists }) => {
+                        if (exists) {
+                            // ルームが存在する場合は視聴者として入る
+                            window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}`;
+                        } else {
+                            // ルームが存在しない場合は配信者として入る
+                            window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}`;
+                        }
                     });
                 </script>
                 </div>
@@ -98,4 +97,3 @@
 </body>
 
 </html>
-
