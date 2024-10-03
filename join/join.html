@@ -40,10 +40,10 @@
                     
                         if (data.exists) {
                           // ルームが存在する場合は視聴者として参加
-                          window.location.href = `/stream.html?password=${encodeURIComponent(password)}&role=viewer`;
+                          window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}&role=viewer`;
                         } else {
                           // ルームが存在しない場合は配信者として参加
-                          window.location.href = `/stream.html?password=${encodeURIComponent(password)}&role=broadcaster`;
+                          window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}&role=broadcaster`;
                         }
                       }
                     });
