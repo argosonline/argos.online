@@ -29,13 +29,24 @@
                 </form>
               
                 <script>
-                  document.getElementById('passwordForm').addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const password = document.getElementById('meetingPassword').value;
-                    if (password) {
-                      window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}`;
-                    }
-                  });
+                 document.getElementById('passwordForm').addEventListener('submit', async (e) => {
+                      e.preventDefault();
+                      const password = document.getElementById('meetingPassword').value;
+                    
+                      if (password) {
+                        // サーバーにルームの存在を確認
+                        const response = await fetch(`/check-room?password=${encodeURIComponent(password)}`);
+                        const data = await response.json();
+                    
+                        if (data.exists) {
+                          // ルームが存在する場合は視聴者として参加
+                          window.location.href = `/stream.html?password=${encodeURIComponent(password)}&role=viewer`;
+                        } else {
+                          // ルームが存在しない場合は配信者として参加
+                          window.location.href = `/stream.html?password=${encodeURIComponent(password)}&role=broadcaster`;
+                        }
+                      }
+                    });
                 </script>
                 </div>
 
