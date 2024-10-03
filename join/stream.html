@@ -1,80 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stream</title>
+    <meta charset="UTF-8">
+    <title>Streaming Room</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <video id="localVideo" autoplay playsinline></video>
-  <video id="remoteVideo" autoplay playsinline></video>
+    <h1>Streaming Room</h1>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    const socket = io();
-    const localVideo = document.getElementById('localVideo');
-    const remoteVideo = document.getElementById('remoteVideo');
-    let localStream;
-    let peerConnection;
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        const socket = io('https://15.152.49.214/:3000'); // AWS EC2のURL
 
-    // WebRTCのSTUNサーバー
-    const configuration = {
-      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-    };
+        const password = new URLSearchParams(window.location.search).get('password');
+        socket.emit('join', password); // パスワードを部屋名として送信
 
-    // 部屋に参加
-    const params = new URLSearchParams(window.location.search);
-    const room = params.get('password');  // パスワードを部屋名として使用
-    socket.emit('join', room);
+        // WebRTCの設定
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        let localStream;
+        let peerConnection;
 
-    // カメラの映像を取得
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        localVideo.srcObject = stream;
-        localStream = stream;
+        // WebRTC接続の構築
+        const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+        peerConnection = new RTCPeerConnection(servers);
 
-        peerConnection = new RTCPeerConnection(configuration);
-
-        // ローカルストリームをRTCPeerConnectionに追加
-        stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
-
-        // ICE候補を送信
-        peerConnection.onicecandidate = (event) => {
-          if (event.candidate) {
-            socket.emit('ice-candidate', event.candidate, room);
-          }
-        };
-
-        // リモートストリームを受け取る
-        peerConnection.ontrack = (event) => {
-          remoteVideo.srcObject = event.streams[0];
-        };
-
-        // オファーを作成して送信
-        peerConnection.createOffer()
-          .then(offer => {
-            peerConnection.setLocalDescription(offer);
-            socket.emit('offer', offer, room);
-          });
-      });
-
-    // シグナリングメッセージを処理
-    socket.on('offer', (offer) => {
-      peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-      peerConnection.createAnswer()
-        .then(answer => {
-          peerConnection.setLocalDescription(answer);
-          socket.emit('answer', answer, room);
+        // 映像の取得
+        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+            localVideo.srcObject = stream;
+            localStream = stream;
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
         });
-    });
 
-    socket.on('answer', (answer) => {
-      peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
-    });
+        // offerを生成して送信
+        peerConnection.createOffer().then(offer => {
+            peerConnection.setLocalDescription(offer);
+            socket.emit('offer', offer, password);
+        });
 
-    socket.on('ice-candidate', (candidate) => {
-      peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
-    });
-  </script>
+        // offerを受信
+        socket.on('offer', (offer) => {
+            peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
+            peerConnection.createAnswer().then(answer => {
+                peerConnection.setLocalDescription(answer);
+                socket.emit('answer', answer, password);
+            });
+        });
+
+        // answerを受信
+        socket.on('answer', (answer) => {
+            peerConnection.setRemoteDescription(new RTCSessionDescription(answer));
+        });
+
+        // ICE候補の送信と受信
+        peerConnection.onicecandidate = event => {
+            if (event.candidate) {
+                socket.emit('ice-candidate', event.candidate, password);
+            }
+        };
+        
+        socket.on('ice-candidate', (candidate) => {
+            peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
+        });
+
+        // リモートストリームの表示
+        peerConnection.ontrack = event => {
+            remoteVideo.srcObject = event.streams[0];
+        };
+    </script>
 </body>
 </html>
