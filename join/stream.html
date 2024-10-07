@@ -12,41 +12,45 @@
 
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <script>
-        const socket = io('https://15.152.49.214/:3000'); // AWS EC2のURL
+        const socket = io('https://15.152.49.214:3000'); // AWS EC2のURL
 
-        const password = new URLSearchParams(window.location.search).get('password');
-        socket.emit('join', password); // パスワードを部屋名として送信
+        const urlParams = new URLSearchParams(window.location.search);
+        const password = urlParams.get('password');
+        const role = urlParams.get('role'); // 配信者か視聴者かを区別
 
-        // WebRTCの設定
+        socket.emit('join', { password, role }); // パスワードと役割を送信
+
         const localVideo = document.getElementById('localVideo');
         const remoteVideo = document.getElementById('remoteVideo');
         let localStream;
         let peerConnection;
 
-        // WebRTC接続の構築
         const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
         peerConnection = new RTCPeerConnection(servers);
 
-        // 映像の取得
-        navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
-            localVideo.srcObject = stream;
-            localStream = stream;
-            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
-        });
+        // 配信者の場合はカメラ映像を取得
+        if (role === 'broadcaster') {
+            navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+                localVideo.srcObject = stream;
+                localStream = stream;
+                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+            });
 
-        // offerを生成して送信
-        peerConnection.createOffer().then(offer => {
-            peerConnection.setLocalDescription(offer);
-            socket.emit('offer', offer, password);
-        });
+            peerConnection.createOffer().then(offer => {
+                peerConnection.setLocalDescription(offer);
+                socket.emit('offer', offer, password);
+            });
+        }
 
         // offerを受信
         socket.on('offer', (offer) => {
             peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-            peerConnection.createAnswer().then(answer => {
-                peerConnection.setLocalDescription(answer);
-                socket.emit('answer', answer, password);
-            });
+            if (role === 'viewer') {
+                peerConnection.createAnswer().then(answer => {
+                    peerConnection.setLocalDescription(answer);
+                    socket.emit('answer', answer, password);
+                });
+            }
         });
 
         // answerを受信
@@ -60,7 +64,7 @@
                 socket.emit('ice-candidate', event.candidate, password);
             }
         };
-        
+
         socket.on('ice-candidate', (candidate) => {
             peerConnection.addIceCandidate(new RTCIceCandidate(candidate));
         });
