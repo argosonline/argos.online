@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Broadcasting</title>
+</head>
+<body>
+    <h1>Broadcasting</h1>
+    <video id="localVideo" autoplay muted></video>
+    <button id="startBroadcast">Start Broadcasting</button>
+
+    <script>
+        let localStream;
+        let peerConnection;
+
+        document.getElementById('startBroadcast').addEventListener('click', async () => {
+            // カメラのストリームを取得
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            document.getElementById('localVideo').srcObject = localStream;
+
+            // PeerConnectionの初期化
+            peerConnection = new RTCPeerConnection();
+
+            // ストリームのトラックをPeerConnectionに追加
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            // シグナリングサーバーへの接続（Renderに設置したサーバーのURLに変更）
+            const signalingSocket = new WebSocket('https://argos-online.onrender.com');
+
+            signalingSocket.onopen = async () => {
+                // Offerを作成
+                const offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+
+                // Offerをシグナリングサーバーに送信
+                signalingSocket.send(JSON.stringify({ type: 'offer', offer }));
+            };
+
+            // 受信したSDPを処理
+            signalingSocket.onmessage = async (message) => {
+                const data = JSON.parse(message.data);
+                if (data.type === 'answer') {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                }
+            };
+        });
+    </script>
+</body>
+</html>
