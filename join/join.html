@@ -37,6 +37,7 @@
                 e.preventDefault();
                 const password = document.getElementById('broadcasterPassword').value;
 
+                // 新しいルームを作成するAPIリクエスト
                 const response = await fetch(`/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
                 const data = await response.json();
 
@@ -52,6 +53,7 @@
                 e.preventDefault();
                 const password = document.getElementById('viewerPassword').value;
 
+                // サーバーにルームの存在を確認
                 const response = await fetch(`/check-room?password=${encodeURIComponent(password)}`);
                 const data = await response.json();
 
