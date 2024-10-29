@@ -12,6 +12,20 @@
     <script>
         let localStream;
         let peerConnection;
+        const signalingSocket = new WebSocket('https://argos-online.onrender.com');
+
+        signalingSocket.onopen = () => {
+            console.log("Connected to signaling server.");
+        };
+
+        signalingSocket.onerror = (error) => {
+            console.error("WebSocket Error: ", error);
+            alert("Connection to the signaling server failed. Please try again.");
+        };
+
+        signalingSocket.onclose = () => {
+            alert("The connection to the server was closed.");
+        };
 
         document.getElementById('startBroadcast').addEventListener('click', async () => {
             // カメラのストリームを取得
@@ -21,30 +35,26 @@
             // PeerConnectionの初期化
             peerConnection = new RTCPeerConnection();
 
-            // ストリームのトラックをPeerConnectionに追加
-            localStream.getTracks().forEach(track => {
-                peerConnection.addTrack(track, localStream);
-            });
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
-            // シグナリングサーバーへの接続（Renderに設置したサーバーのURLに変更）
-            const signalingSocket = new WebSocket('https://argos-online.onrender.com');
-
-            signalingSocket.onopen = async () => {
-                // Offerを作成
-                const offer = await peerConnection.createOffer();
-                await peerConnection.setLocalDescription(offer);
-
-                // Offerをシグナリングサーバーに送信
-                signalingSocket.send(JSON.stringify({ type: 'offer', offer }));
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    signalingSocket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+                }
             };
 
-            // 受信したSDPを処理
             signalingSocket.onmessage = async (message) => {
                 const data = JSON.parse(message.data);
                 if (data.type === 'answer') {
                     await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                } else if (data.type === 'candidate') {
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
                 }
             };
+
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            signalingSocket.send(JSON.stringify({ type: 'offer', offer }));
         });
     </script>
 </body>

@@ -10,34 +10,46 @@
 
     <script>
         let peerConnection;
-
         const signalingSocket = new WebSocket('https://argos-online.onrender.com');
 
         signalingSocket.onopen = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const password = urlParams.get('password');
 
-            // ルームに参加するためのメッセージを送信
             signalingSocket.send(JSON.stringify({ type: 'join', password }));
+        };
+
+        signalingSocket.onerror = (error) => {
+            console.error("WebSocket Error: ", error);
+            alert("Connection to the signaling server failed. Please try again.");
+        };
+
+        signalingSocket.onclose = () => {
+            alert("The connection to the server was closed.");
         };
 
         signalingSocket.onmessage = async (message) => {
             const data = JSON.parse(message.data);
+
             if (data.type === 'offer') {
                 peerConnection = new RTCPeerConnection();
 
-                // 受信したOfferに対する応答を作成
+                peerConnection.onicecandidate = (event) => {
+                    if (event.candidate) {
+                        signalingSocket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+                    }
+                };
+
                 await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
                 const answer = await peerConnection.createAnswer();
                 await peerConnection.setLocalDescription(answer);
-
-                // Answerをシグナリングサーバーに送信
                 signalingSocket.send(JSON.stringify({ type: 'answer', answer }));
 
-                // Remote Streamの受信処理
                 peerConnection.ontrack = (event) => {
                     document.getElementById('remoteVideo').srcObject = event.streams[0];
                 };
+            } else if (data.type === 'candidate') {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
             }
         };
     </script>
