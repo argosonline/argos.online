@@ -21,14 +21,14 @@
         <h2>Broadcasting</h2>
         <form id="broadcasterForm">
             <input type="password" id="broadcasterPassword" placeholder="Create room password" required />
-            <button type="submit" onclick="location.href='stream/Broadcasting.html'">Create Meeting</button>
+            <button type="submit">Create Meeting</button>
         </form>
 
         <!-- 視聴者用フォーム -->
         <h2>Viewing</h2>
         <form id="viewerForm">
             <input type="password" id="viewerPassword" placeholder="Enter room password" required />
-            <button type="submit" onclick="location.href='stream/Viewing.html'">Join Meeting</button>
+            <button type="submit">Join Meeting</button>
         </form>
 
         <script>
@@ -37,12 +37,11 @@
                 e.preventDefault();
                 const password = document.getElementById('broadcasterPassword').value;
 
-                // 新しいルームを作成するAPIリクエスト
                 const response = await fetch(`/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
                 const data = await response.json();
 
                 if (data.success) {
-                    window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}&role=broadcaster`;
+                    window.location.href = `/stream/Broadcasting.html?password=${encodeURIComponent(password)}&role=broadcaster`;
                 } else {
                     alert('Failed to create room.');
                 }
@@ -53,12 +52,11 @@
                 e.preventDefault();
                 const password = document.getElementById('viewerPassword').value;
 
-                // サーバーにルームの存在を確認
                 const response = await fetch(`/check-room?password=${encodeURIComponent(password)}`);
                 const data = await response.json();
 
                 if (data.exists) {
-                    window.location.href = `/join/stream.html?password=${encodeURIComponent(password)}&role=viewer`;
+                    window.location.href = `/stream/Viewing.html?password=${encodeURIComponent(password)}&role=viewer`;
                 } else {
                     alert('Room does not exist.');
                 }
