@@ -27,24 +27,18 @@
             });
 
             // シグナリングサーバーへの接続（Renderに設置したサーバーのURLに変更）
-            const signalingSocket = new WebSocket('wss://argos-online.onrender.com');
+            const signalingSocket = new WebSocket('https://argos-online.onrender.com');
 
             signalingSocket.onopen = async () => {
-                const password = prompt("Enter the password for broadcasting");
-
                 // Offerを作成
                 const offer = await peerConnection.createOffer();
                 await peerConnection.setLocalDescription(offer);
 
-                // Offerとpasswordをシグナリングサーバーに送信
-                signalingSocket.send(JSON.stringify({
-                    type: 'offer',
-                    offer: offer,
-                    password: password
-                }));
+                // Offerをシグナリングサーバーに送信
+                signalingSocket.send(JSON.stringify({ type: 'offer', offer }));
             };
 
-            // Answerの受信処理
+            // 受信したSDPを処理
             signalingSocket.onmessage = async (message) => {
                 const data = JSON.parse(message.data);
                 if (data.type === 'answer') {
