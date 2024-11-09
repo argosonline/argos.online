@@ -1,15 +1,17 @@
 {
-  "name": "argos-online",
-  "version": "1.0.0",
-  "description": "A WebRTC live streaming application",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.17.1",
-    "ws": "^8.4.0"
-  },
-  "author": "Your Name",
-  "license": "ISC"
-}
+    "name": "argos-online",
+    "version": "1.0.0",
+    "description": "A WebRTC live streaming application",
+    "main": "server.js",
+    "scripts": {
+      "start": "node server.js"
+    },
+    "dependencies": {
+      "express": "^4.17.1",
+      "socket.io": "^4.0.0",
+      "cors": "^2.8.5"
+    },
+    "author": "Your Name",
+    "license": "ISC"
+  }
+  

@@ -8,6 +8,10 @@ const server = http.createServer(app);
 const io = new Server(server);
 
 const PORT = process.env.PORT || 10000; // Renderが指定するポートを使用
+server.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
+
 
 const rooms = {}; // ルームの状態を保存
 
