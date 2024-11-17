@@ -1,121 +1,51 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>Argos.online</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Argos.online">
-    <link rel="stylesheet" href="loading.css">
-    <link rel="stylesheet" href="body.css">
-    <script src="type.js" defer></script>
-    <script src="gallarey.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
-</head>
+<script>
+    // 配信者用フォームの処理
+    document.getElementById('broadcasterForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password = document.getElementById('broadcasterPassword').value;
 
-<body>
-    <div class="maincontents">
-        <h1>Enter Meeting Password</h1>
+        try {
+            const response = await fetch(`https://argos-online.onrender.com/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
 
-        <!-- 配信者用フォーム -->
-        <h2>Broadcasting</h2>
-        <form id="broadcasterForm">
-            <input type="password" id="broadcasterPassword" placeholder="Create room password" required />
-            <button type="submit">Create Meeting</button>
-        </form>
+            if (response.ok) {
+                const data = await response.json();
 
-        <!-- 視聴者用フォーム -->
-        <h2>Viewing</h2>
-        <form id="viewerForm">
-            <input type="password" id="viewerPassword" placeholder="Enter room password" required />
-            <button type="submit">Join Meeting</button>
-        </form>
-
-        <script>
-            // 配信者用フォームの処理
-            document.getElementById('broadcasterForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const password = document.getElementById('broadcasterPassword').value;
-        
-                console.log("配信者フォーム送信イベント発生");
-                console.log("入力されたパスワード:", password);
-        
-                try {
-                    const response = await fetch(`https://argos-online.onrender.com/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
-                    console.log("Renderにリクエスト送信完了: /create-room");
-        
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log("Renderからのレスポンスを受信:", data);
-        
-                        if (data.success) {
-                            console.log("ルーム作成成功。配信ページに遷移します。");
-                            window.location.href = `/stream/Broadcasting.html?password=${encodeURIComponent(password)}&role=broadcaster`;
-                        } else {
-                            console.error("ルーム作成失敗: すでにルームが存在します。");
-                            alert('Failed to create room.');
-                        }
-                    } else {
-                        console.error("Renderとの通信に失敗:", response.status, response.statusText);
-                        alert('Failed to communicate with server.');
-                    }
-                } catch (err) {
-                    console.error("リクエスト送信中にエラー発生:", err);
-                    alert('An error occurred while creating the room.');
+                if (data.success) {
+                    // 修正: 正しいURLを指定
+                    window.location.href = `https://argosonline.github.io/stream/Broadcasting.html?password=${encodeURIComponent(password)}&role=broadcaster`;
+                } else {
+                    alert('Failed to create room.');
                 }
-            });
-        
-            // 視聴者用フォームの処理
-            document.getElementById('viewerForm').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const password = document.getElementById('viewerPassword').value;
-        
-                console.log("視聴者フォーム送信イベント発生");
-                console.log("入力されたパスワード:", password);
-        
-                try {
-                    const response = await fetch(`https://argos-online.onrender.com/check-room?password=${encodeURIComponent(password)}`);
-                    console.log("Renderにリクエスト送信完了: /check-room");
-        
-                    if (response.ok) {
-                        const data = await response.json();
-                        console.log("Renderからのレスポンスを受信:", data);
-        
-                        if (data.exists) {
-                            console.log("ルームが存在します。視聴ページに遷移します。");
-                            window.location.href = `/stream/Viewing.html?password=${encodeURIComponent(password)}&role=viewer`;
-                        } else {
-                            console.error("ルームが存在しません。");
-                            alert('Room does not exist.');
-                        }
-                    } else {
-                        console.error("Renderとの通信に失敗:", response.status, response.statusText);
-                        alert('Failed to communicate with server.');
-                    }
-                } catch (err) {
-                    console.error("リクエスト送信中にエラー発生:", err);
-                    alert('An error occurred while checking the room.');
+            } else {
+                alert('Failed to communicate with server.');
+            }
+        } catch (err) {
+            alert('An error occurred while creating the room.');
+        }
+    });
+
+    // 視聴者用フォームの処理
+    document.getElementById('viewerForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const password = document.getElementById('viewerPassword').value;
+
+        try {
+            const response = await fetch(`https://argos-online.onrender.com/check-room?password=${encodeURIComponent(password)}`);
+
+            if (response.ok) {
+                const data = await response.json();
+
+                if (data.exists) {
+                    // 修正: 正しいURLを指定
+                    window.location.href = `https://argosonline.github.io/stream/Viewing.html?password=${encodeURIComponent(password)}&role=viewer`;
+                } else {
+                    alert('Room does not exist.');
                 }
-            });
-        </script>
-        
-    </div>
-
-    <div class="loading">
-        <div style="position: relative; z-index: -1;" class="gradient-bg">
-            <div class="gradients-container">
-                <div class="g1"></div>
-                <div class="g2"></div>
-                <div class="g3"></div>
-                <div class="g4"></div>
-                <div class="g5"></div>
-                <div class="interactive"></div>
-            </div>
-        </div>
-    </div>
-
-    <footer>
-        <!--ここに入れろ-->
-    </footer>
-</body>
-</html>
+            } else {
+                alert('Failed to communicate with server.');
+            }
+        } catch (err) {
+            alert('An error occurred while checking the room.');
+        }
+    });
+</script>
