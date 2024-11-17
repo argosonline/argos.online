@@ -18,7 +18,8 @@ const rooms = {}; // ルームの状態を保存
 
 // CORS設定
 const allowedOrigins = [
-    'https://argosonline.github.io', // フロントエンドのURL
+    'https://argosonline.github.io/argos.online/join/join.html', // 修正箇所：JoinページのURLを追加
+    'https://argosonline.github.io', // フロントエンドのURL（必要に応じて）
     'https://argos-online.onrender.com' // 自身のURL（必要に応じて）
 ];
 
