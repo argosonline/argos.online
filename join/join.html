@@ -36,34 +36,69 @@
             document.getElementById('broadcasterForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const password = document.getElementById('broadcasterPassword').value;
-
-                // 新しいルームを作成するAPIリクエスト
-                const response = await fetch(`/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
-                const data = await response.json();
-
-                if (data.success) {
-                    window.location.href = `/stream/Broadcasting.html?password=${encodeURIComponent(password)}&role=broadcaster`;
-                } else {
-                    alert('Failed to create room.');
+        
+                console.log("配信者フォーム送信イベント発生");
+                console.log("入力されたパスワード:", password);
+        
+                try {
+                    const response = await fetch(`/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
+                    console.log("Renderにリクエスト送信完了: /create-room");
+        
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log("Renderからのレスポンスを受信:", data);
+        
+                        if (data.success) {
+                            console.log("ルーム作成成功。配信ページに遷移します。");
+                            window.location.href = `/stream/Broadcasting.html?password=${encodeURIComponent(password)}&role=broadcaster`;
+                        } else {
+                            console.error("ルーム作成失敗: すでにルームが存在します。");
+                            alert('Failed to create room.');
+                        }
+                    } else {
+                        console.error("Renderとの通信に失敗:", response.status, response.statusText);
+                        alert('Failed to communicate with server.');
+                    }
+                } catch (err) {
+                    console.error("リクエスト送信中にエラー発生:", err);
+                    alert('An error occurred while creating the room.');
                 }
             });
-
+        
             // 視聴者用フォームの処理
             document.getElementById('viewerForm').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const password = document.getElementById('viewerPassword').value;
-
-                // サーバーにルームの存在を確認
-                const response = await fetch(`/check-room?password=${encodeURIComponent(password)}`);
-                const data = await response.json();
-
-                if (data.exists) {
-                    window.location.href = `/stream/Viewing.html?password=${encodeURIComponent(password)}&role=viewer`;
-                } else {
-                    alert('Room does not exist.');
+        
+                console.log("視聴者フォーム送信イベント発生");
+                console.log("入力されたパスワード:", password);
+        
+                try {
+                    const response = await fetch(`/check-room?password=${encodeURIComponent(password)}`);
+                    console.log("Renderにリクエスト送信完了: /check-room");
+        
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log("Renderからのレスポンスを受信:", data);
+        
+                        if (data.exists) {
+                            console.log("ルームが存在します。視聴ページに遷移します。");
+                            window.location.href = `/stream/Viewing.html?password=${encodeURIComponent(password)}&role=viewer`;
+                        } else {
+                            console.error("ルームが存在しません。");
+                            alert('Room does not exist.');
+                        }
+                    } else {
+                        console.error("Renderとの通信に失敗:", response.status, response.statusText);
+                        alert('Failed to communicate with server.');
+                    }
+                } catch (err) {
+                    console.error("リクエスト送信中にエラー発生:", err);
+                    alert('An error occurred while checking the room.');
                 }
             });
         </script>
+        
     </div>
 
     <div class="loading">
