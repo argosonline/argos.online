@@ -7,16 +7,16 @@
 <body>
     <h1>Viewing</h1>
     <video id="remoteVideo" autoplay></video>
+    <input type="text" id="roomPassword" placeholder="Enter Room Password">
+    <button id="startViewing">Start Viewing</button>
 
     <script>
+        let remoteStream;
         let peerConnection;
-        const signalingSocket = new WebSocket('https://argos-online.onrender.com');
+        const signalingSocket = new WebSocket('wss://argos-online.onrender.com'); // 注意: ws から wss に変更
 
         signalingSocket.onopen = () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const password = urlParams.get('password');
-
-            signalingSocket.send(JSON.stringify({ type: 'join', password }));
+            console.log("Connected to signaling server.");
         };
 
         signalingSocket.onerror = (error) => {
@@ -28,30 +28,40 @@
             alert("The connection to the server was closed.");
         };
 
-        signalingSocket.onmessage = async (message) => {
-            const data = JSON.parse(message.data);
+        document.getElementById('startViewing').addEventListener('click', async () => {
+            const password = document.getElementById('roomPassword').value;
 
-            if (data.type === 'offer') {
-                peerConnection = new RTCPeerConnection();
+            // シグナリングサーバーに接続して、視聴者として参加
+            signalingSocket.send(JSON.stringify({ type: 'joinRoom', password: password, role: 'viewer' }));
 
-                peerConnection.onicecandidate = (event) => {
-                    if (event.candidate) {
-                        signalingSocket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
-                    }
-                };
+            signalingSocket.onmessage = async (message) => {
+                const data = JSON.parse(message.data);
+                if (data.type === 'offer') {
+                    // Offerを受け取ったら、answerを返す
+                    peerConnection = new RTCPeerConnection();
+                    peerConnection.onicecandidate = (event) => {
+                        if (event.candidate) {
+                            signalingSocket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
+                        }
+                    };
 
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
-                const answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-                signalingSocket.send(JSON.stringify({ type: 'answer', answer }));
+                    peerConnection.ontrack = (event) => {
+                        if (!remoteStream) {
+                            remoteStream = event.streams[0];
+                            document.getElementById('remoteVideo').srcObject = remoteStream;
+                        }
+                    };
 
-                peerConnection.ontrack = (event) => {
-                    document.getElementById('remoteVideo').srcObject = event.streams[0];
-                };
-            } else if (data.type === 'candidate') {
-                await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
-            }
-        };
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+
+                    const answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    signalingSocket.send(JSON.stringify({ type: 'answer', answer }));
+                } else if (data.type === 'candidate') {
+                    await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                }
+            };
+        });
     </script>
 </body>
 </html>

@@ -12,7 +12,7 @@
     <script>
         let localStream;
         let peerConnection;
-        const signalingSocket = new WebSocket('https://argos-online.onrender.com');
+        const signalingSocket = new WebSocket('wss://argos-online.onrender.com'); // 注意: ws から wss に変更
 
         signalingSocket.onopen = () => {
             console.log("Connected to signaling server.");
@@ -35,14 +35,17 @@
             // PeerConnectionの初期化
             peerConnection = new RTCPeerConnection();
 
+            // localStream のトラックを PeerConnection に追加
             localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
 
+            // ICE候補をシグナリングサーバーに送信
             peerConnection.onicecandidate = (event) => {
                 if (event.candidate) {
                     signalingSocket.send(JSON.stringify({ type: 'candidate', candidate: event.candidate }));
                 }
             };
 
+            // メッセージを受け取ったときの処理
             signalingSocket.onmessage = async (message) => {
                 const data = JSON.parse(message.data);
                 if (data.type === 'answer') {
@@ -52,6 +55,7 @@
                 }
             };
 
+            // Offerを作成して送信
             const offer = await peerConnection.createOffer();
             await peerConnection.setLocalDescription(offer);
             signalingSocket.send(JSON.stringify({ type: 'offer', offer }));
