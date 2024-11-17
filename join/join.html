@@ -31,58 +31,59 @@
             <button type="submit">Join Meeting</button>
         </form>
 
-       <script>
-    // 配信者用フォームの処理
-    document.getElementById('broadcasterForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const password = document.getElementById('broadcasterPassword').value;
-
-        try {
-            const response = await fetch(`https://argos-online.onrender.com/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
-
-            if (response.ok) {
-                const data = await response.json();
-
-                if (data.success) {
-                    // 修正: 正しいURLを指定
-                    window.location.href = `https://argosonline.github.io/stream/Broadcasting.html?password=${encodeURIComponent(password)}&role=broadcaster`;
-                } else {
-                    alert('Failed to create room.');
+        <script>
+            // 配信者用フォームの処理
+            document.getElementById('broadcasterForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const password = document.getElementById('broadcasterPassword').value;
+        
+                try {
+                    const response = await fetch(`https://argos-online.onrender.com/create-room?password=${encodeURIComponent(password)}`, { method: 'POST' });
+        
+                    if (response.ok) {
+                        const data = await response.json();
+        
+                        if (data.success) {
+                            // 修正: 正しいURLを指定
+                            window.location.href = `https://argosonline.github.io/argos.online/join/stream/Broadcasting.html?password=${encodeURIComponent(password)}&role=broadcaster`;
+                        } else {
+                            alert('Failed to create room.');
+                        }
+                    } else {
+                        alert('Failed to communicate with server.');
+                    }
+                } catch (err) {
+                    alert('An error occurred while creating the room.');
                 }
-            } else {
-                alert('Failed to communicate with server.');
-            }
-        } catch (err) {
-            alert('An error occurred while creating the room.');
-        }
-    });
-
-    // 視聴者用フォームの処理
-    document.getElementById('viewerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const password = document.getElementById('viewerPassword').value;
-
-        try {
-            const response = await fetch(`https://argos-online.onrender.com/check-room?password=${encodeURIComponent(password)}`);
-
-            if (response.ok) {
-                const data = await response.json();
-
-                if (data.exists) {
-                    // 修正: 正しいURLを指定
-                    window.location.href = `https://argosonline.github.io/stream/Viewing.html?password=${encodeURIComponent(password)}&role=viewer`;
-                } else {
-                    alert('Room does not exist.');
+            });
+        
+            // 視聴者用フォームの処理
+            document.getElementById('viewerForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const password = document.getElementById('viewerPassword').value;
+        
+                try {
+                    const response = await fetch(`https://argos-online.onrender.com/check-room?password=${encodeURIComponent(password)}`);
+        
+                    if (response.ok) {
+                        const data = await response.json();
+        
+                        if (data.exists) {
+                            // 修正: 正しいURLを指定
+                            window.location.href = `https://argosonline.github.io/argos.online/join/stream/Viewing.html?password=${encodeURIComponent(password)}&role=viewer`;
+                        } else {
+                            alert('Room does not exist.');
+                        }
+                    } else {
+                        alert('Failed to communicate with server.');
+                    }
+                } catch (err) {
+                    alert('An error occurred while checking the room.');
                 }
-            } else {
-                alert('Failed to communicate with server.');
-            }
-        } catch (err) {
-            alert('An error occurred while checking the room.');
-        }
-    });
-</script>
-
+            });
+        </script>
+        
+        
     </div>
 
     <div class="loading">
