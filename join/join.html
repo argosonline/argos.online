@@ -1,4 +1,37 @@
-<script>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Argos.online</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Argos.online">
+    <link rel="stylesheet" href="loading.css">
+    <link rel="stylesheet" href="body.css">
+    <script src="type.js" defer></script>
+    <script src="gallarey.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/ScrollTrigger.min.js"></script>
+</head>
+
+<body>
+    <div class="maincontents">
+        <h1>Enter Meeting Password</h1>
+
+        <!-- 配信者用フォーム -->
+        <h2>Broadcasting</h2>
+        <form id="broadcasterForm">
+            <input type="password" id="broadcasterPassword" placeholder="Create room password" required />
+            <button type="submit">Create Meeting</button>
+        </form>
+
+        <!-- 視聴者用フォーム -->
+        <h2>Viewing</h2>
+        <form id="viewerForm">
+            <input type="password" id="viewerPassword" placeholder="Enter room password" required />
+            <button type="submit">Join Meeting</button>
+        </form>
+
+       <script>
     // 配信者用フォームの処理
     document.getElementById('broadcasterForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -49,3 +82,24 @@
         }
     });
 </script>
+
+    </div>
+
+    <div class="loading">
+        <div style="position: relative; z-index: -1;" class="gradient-bg">
+            <div class="gradients-container">
+                <div class="g1"></div>
+                <div class="g2"></div>
+                <div class="g3"></div>
+                <div class="g4"></div>
+                <div class="g5"></div>
+                <div class="interactive"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <!--ここに入れろ-->
+    </footer>
+</body>
+</html>
