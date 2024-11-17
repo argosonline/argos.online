@@ -17,8 +17,15 @@ server.listen(PORT, () => {
 const rooms = {}; // ルームの状態を保存
 
 // CORS設定
+const allowedOrigins = [
+    'https://argosonline.github.io', // フロントエンドのURL
+    'https://argos-online.onrender.com' // 自身のURL（必要に応じて）
+];
+
 app.use(cors({
-    origin: 'https://argosonline.github.io' // フロントエンドのURL
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'],
+    credentials: true // 必要に応じて
 }));
 
 // JSONのリクエストボディをパース
