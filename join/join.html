@@ -74,7 +74,7 @@
                 console.log("入力されたパスワード:", password);
         
                 try {
-                    const response = await fetch(`/check-room?password=${encodeURIComponent(password)}`);
+                    const response = await fetch(`https://argos-online.onrender.com/check-room?password=${encodeURIComponent(password)}`);
                     console.log("Renderにリクエスト送信完了: /check-room");
         
                     if (response.ok) {
